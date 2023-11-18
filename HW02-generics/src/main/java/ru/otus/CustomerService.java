@@ -13,7 +13,11 @@ public class CustomerService {
     public Map.Entry<Customer, String> getSmallest() {
         var firstEntry = map.firstEntry();
         var key = firstEntry.getKey();
-        return Map.entry(new Customer(key.getId(), key.getName(), key.getScores()), firstEntry.getValue());
+        // делаем полную копию ключа, чтобы издевательства в тесте никак не влияли на ключ в коллекции
+        return Map.entry(
+                new Customer(key.getId(), key.getName(), key.getScores()),
+                firstEntry.getValue()
+        );
     }
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
@@ -27,7 +31,7 @@ public class CustomerService {
             var key = entry.getKey();
             var scores = key.getScores();
             if (scores == customer.getScores()) isNeedReturnCurrent = true;
-            if (scores > customer.getScores()) return map.ceilingEntry(key);
+            if (scores > customer.getScores()) return entry;
         }
         return null;
     }
