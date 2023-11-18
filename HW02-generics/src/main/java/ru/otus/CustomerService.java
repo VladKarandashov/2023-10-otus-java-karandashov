@@ -20,17 +20,23 @@ public class CustomerService {
         );
     }
 
+    /**
+     * Ищет entry по следующим правилам:
+     * 1) если score текущего элемента равен customer.getScore(), то возвращаем следующий элемент
+     * 2) если score текущего элемента больше customer.getScore(), то возвращаем текущий элемент
+     * Если ничего не нашли - null
+     *
+     * @param customer - ключ для поиска
+     * @return найденный entry
+     */
     public Map.Entry<Customer, String> getNext(Customer customer) {
 
-        var entries = map.entrySet();
-        var isNeedReturnCurrent = false;
+        var entryIterator = map.entrySet().iterator();
 
-        for (var entry : entries) {
-            if (isNeedReturnCurrent) return entry;
-
-            var key = entry.getKey();
-            var scores = key.getScores();
-            if (scores == customer.getScores()) isNeedReturnCurrent = true;
+        while (entryIterator.hasNext()) {
+            var entry = entryIterator.next();
+            var scores = entry.getKey().getScores();
+            if (scores == customer.getScores()) return entryIterator.next();
             if (scores > customer.getScores()) return entry;
         }
         return null;
