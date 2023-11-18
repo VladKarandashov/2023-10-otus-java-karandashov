@@ -11,7 +11,9 @@ public class CustomerService {
     private final TreeMap<Customer, String> map = new TreeMap<>(Comparator.comparing(Customer::getScores));
 
     public Map.Entry<Customer, String> getSmallest() {
-        return map.firstEntry();
+        var firstEntry = map.firstEntry();
+        var key = firstEntry.getKey();
+        return Map.entry(new Customer(key.getId(), key.getName(), key.getScores()), firstEntry.getValue());
     }
 
     public Map.Entry<Customer, String> getNext(Customer customer) {

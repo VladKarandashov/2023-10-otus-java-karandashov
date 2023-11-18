@@ -99,7 +99,6 @@ class CustomerTest {
     }
 
     @Test
-    @Disabled("надо удалить") // надо удалить
     @DisplayName("Модификация коллекции")
     void mutationTest() {
         // given
