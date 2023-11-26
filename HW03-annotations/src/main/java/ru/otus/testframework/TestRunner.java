@@ -32,14 +32,14 @@ public class TestRunner {
    */
   public static void run(Class<?> testClass) {
     System.out.println("______________________________________");
-    System.out.printf("RUN TEST CLASS  %s", testClass.getName());
+    System.out.printf("ВЫПОЛНЯЮ ТЕСТЫ В КЛАССЕ  %s \n", testClass.getName());
     int testsWithExceptionCount = 0;
     List<Method> classMethods = List.of(testClass.getMethods());
     Map<Annotations, List<Method>> annotatedMethodsMap = ReflectionTestUtil.getAnnotatedMethods(classMethods);
     try {
       testsWithExceptionCount = startTests(testClass, annotatedMethodsMap);
     } catch (Exception e) {
-      System.out.printf("Can't create instance for test class  %s", testClass.getName());
+      System.out.printf("Не получилось создать тестовый класс  %s", testClass.getName());
     }
     testStatistics(annotatedMethodsMap, testsWithExceptionCount);
   }
@@ -48,9 +48,11 @@ public class TestRunner {
           throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
     int testsWithExceptionCount = 0;
     for (Method testMethod : annotationsEnumListMap.get(Annotations.TEST)) {
+      System.out.printf("-> выполняю тест %s \n", testMethod.getName());
       var newInstance = testClass.getConstructor().newInstance();
       ReflectionTestUtil.invokeMethod(annotationsEnumListMap.get(Annotations.BEFORE), newInstance);
       try {
+        System.out.printf("-> -> Запускаю метод с тестом %s \n", testMethod.getName());
         ReflectionTestUtil.invokeMethod(testMethod, newInstance);
       } catch (TestInvokeException e) {
         testsWithExceptionCount++;
@@ -64,7 +66,7 @@ public class TestRunner {
                                      int testsWithException) {
     int totalTests = annotationsEnumListMap.get(Annotations.TEST).size();
     int successfulTests = totalTests - testsWithException;
-    System.out.println("Statistics:");
-    System.out.printf("\t TOTAL TESTS: %d, PASSED: %d, FAILED: %d%n", totalTests, successfulTests, testsWithException);
+    System.out.println("СТАТИСТИКА:");
+    System.out.printf("\t Всего тестов: %d, Пройдено: %d, НЕ-Пройдено: %d%n", totalTests, successfulTests, testsWithException);
   }
 }

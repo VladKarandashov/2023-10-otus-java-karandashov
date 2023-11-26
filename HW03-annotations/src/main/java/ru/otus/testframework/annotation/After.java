@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Аннотация для метода, который должен быть выполнен после выполнения всех тестов в классе
+ * Аннотация для метода, который должен быть выполнен после каждого теста в классе
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
