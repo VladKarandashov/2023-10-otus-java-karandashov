@@ -24,3 +24,4 @@ pluginManagement {
     }
 }
 include("HW02-generics")
+include("HW03-annotations")
