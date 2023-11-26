@@ -1,4 +1,4 @@
-package ru.otus;
+package ru.otus.testexample;
 
 import ru.otus.testframework.annotation.After;
 import ru.otus.testframework.annotation.Before;
