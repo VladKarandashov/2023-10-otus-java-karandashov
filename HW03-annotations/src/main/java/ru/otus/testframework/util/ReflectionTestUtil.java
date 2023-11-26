@@ -44,6 +44,22 @@ public class ReflectionTestUtil {
     }
 
     /**
+     * Принимает список методов класса и группирует их по группам тестирования
+     *
+     * @param classMethods - список методов
+     * @return Map, где ключ - это аннотация тестового фреймворка, а значение - список методов отмеченных данной тестовой аннотацией
+     */
+    public static Map<Annotations, List<Method>> getAnnotatedMethods(List<Method> classMethods) {
+        List<Annotations> annotationsList = List.of(Annotations.values());
+        Map<Annotations, List<Method>> methodMap = new LinkedHashMap<>();
+
+        annotationsList.forEach(annotation ->
+                methodMap.put(annotation, findAnnotatedMethods(classMethods, annotation))
+        );
+        return methodMap;
+    }
+
+    /**
      * Принимает список методов класса и фильтрует их, оставляя только методы, имеющие отношение к тестам
      *
      * @param methods - список методов
@@ -55,21 +71,4 @@ public class ReflectionTestUtil {
                 .filter(testClassMethod -> testClassMethod.isAnnotationPresent(annotation.getAnnotationClass()))
                 .toList();
     }
-
-    /**
-     * Принимает список методов класса и группирует их по группам тестирования
-     *
-     * @param classMethods - список методов
-     * @return Map, где ключ - это аннотация тестового фреймворка, а значение - список методов отмеченных данной тестовой аннотацией
-     */
-    public static Map<Annotations, List<Method>> getAnnotatedMethods(List<Method> classMethods) {
-        List<Annotations> annotationsList = List.of(Annotations.values());
-        Map<Annotations, List<Method>> methodMap = new LinkedHashMap<>();
-
-        annotationsList.forEach(clazz ->
-                methodMap.put(clazz, findAnnotatedMethods(classMethods, clazz))
-        );
-        return methodMap;
-    }
-
 }

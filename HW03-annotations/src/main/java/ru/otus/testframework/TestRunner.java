@@ -4,7 +4,6 @@ import ru.otus.testframework.enumerate.Annotations;
 import ru.otus.testframework.exception.TestInvokeException;
 import ru.otus.testframework.util.ReflectionTestUtil;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -31,33 +30,34 @@ public class TestRunner {
    * @param testClass - тестовый класс
    */
   public static void run(Class<?> testClass) {
+
     System.out.println("______________________________________");
     System.out.printf("ВЫПОЛНЯЮ ТЕСТЫ В КЛАССЕ  %s \n", testClass.getName());
-    int testsWithExceptionCount = 0;
     List<Method> classMethods = List.of(testClass.getMethods());
     Map<Annotations, List<Method>> annotatedMethodsMap = ReflectionTestUtil.getAnnotatedMethods(classMethods);
+
     try {
-      testsWithExceptionCount = startTests(testClass, annotatedMethodsMap);
+      var classInstance = testClass.getConstructor().newInstance();
+      int testsWithExceptionCount = startTests(classInstance, annotatedMethodsMap);
+      testStatistics(annotatedMethodsMap, testsWithExceptionCount);
     } catch (Exception e) {
-      System.out.printf("Не получилось создать тестовый класс  %s", testClass.getName());
+      System.out.printf("Не получилось создать тестовый класс  %s \n", testClass.getName());
+      testStatistics(annotatedMethodsMap, annotatedMethodsMap.get(Annotations.TEST).size());
     }
-    testStatistics(annotatedMethodsMap, testsWithExceptionCount);
   }
 
-  private static int startTests(Class<?> testClass, Map<Annotations, List<Method>> annotationsEnumListMap)
-          throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+  private static int startTests(Object testClassInstance, Map<Annotations, List<Method>> annotationsEnumListMap) {
     int testsWithExceptionCount = 0;
     for (Method testMethod : annotationsEnumListMap.get(Annotations.TEST)) {
       System.out.printf("-> выполняю тест %s \n", testMethod.getName());
-      var newInstance = testClass.getConstructor().newInstance();
-      ReflectionTestUtil.invokeMethod(annotationsEnumListMap.get(Annotations.BEFORE), newInstance);
+      ReflectionTestUtil.invokeMethod(annotationsEnumListMap.get(Annotations.BEFORE), testClassInstance);
       try {
         System.out.printf("-> -> Запускаю метод с тестом %s \n", testMethod.getName());
-        ReflectionTestUtil.invokeMethod(testMethod, newInstance);
+        ReflectionTestUtil.invokeMethod(testMethod, testClassInstance);
       } catch (TestInvokeException e) {
         testsWithExceptionCount++;
       }
-      ReflectionTestUtil.invokeMethod(annotationsEnumListMap.get(Annotations.AFTER), newInstance);
+      ReflectionTestUtil.invokeMethod(annotationsEnumListMap.get(Annotations.AFTER), testClassInstance);
     }
     return testsWithExceptionCount;
   }
