@@ -6,6 +6,9 @@ import ru.otus.testframework.annotation.After;
 import ru.otus.testframework.annotation.Before;
 import ru.otus.testframework.annotation.Test;
 
+/**
+ * Вспомогательный enum для разбора аннотаций
+ */
 public enum Annotations {
   BEFORE(Before.class),
   TEST(Test.class),
