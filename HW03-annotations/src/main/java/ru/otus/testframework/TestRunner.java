@@ -20,7 +20,7 @@ public class TestRunner {
    * @param className - полное имя класса со всеми пакетами
    * @throws ClassNotFoundException - если класс не найден
    */
-  public static void run(String className) throws ClassNotFoundException {
+  public void run(String className) throws ClassNotFoundException {
     Class<?> testClass = Class.forName(className);
     run(testClass);
   }
@@ -30,7 +30,7 @@ public class TestRunner {
    *
    * @param testClass - тестовый класс
    */
-  public static void run(Class<?> testClass) {
+  public void run(Class<?> testClass) {
 
     System.out.println("______________________________________");
     System.out.printf("ВЫПОЛНЯЮ ТЕСТЫ В КЛАССЕ  %s \n", testClass.getName());
@@ -46,7 +46,7 @@ public class TestRunner {
     }
   }
 
-  private static int startTests(Class<?> testClass, Map<Annotations, List<Method>> annotationsEnumListMap)
+  private int startTests(Class<?> testClass, Map<Annotations, List<Method>> annotationsEnumListMap)
           throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
     int testsWithExceptionCount = 0;
     for (Method testMethod : annotationsEnumListMap.get(Annotations.TEST)) {
@@ -65,7 +65,7 @@ public class TestRunner {
     return testsWithExceptionCount;
   }
 
-  private static void testStatistics(Map<Annotations, List<Method>> annotationsEnumListMap,
+  private void testStatistics(Map<Annotations, List<Method>> annotationsEnumListMap,
                                      int testsWithException) {
     int totalTests = annotationsEnumListMap.get(Annotations.TEST).size();
     int successfulTests = totalTests - testsWithException;
