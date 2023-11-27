@@ -4,6 +4,7 @@ import ru.otus.testframework.enumerate.Annotations;
 import ru.otus.testframework.exception.TestInvokeException;
 import ru.otus.testframework.util.ReflectionTestUtil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +38,7 @@ public class TestRunner {
     Map<Annotations, List<Method>> annotatedMethodsMap = ReflectionTestUtil.getAnnotatedMethods(classMethods);
 
     try {
-      var classInstance = testClass.getConstructor().newInstance();
-      int testsWithExceptionCount = startTests(classInstance, annotatedMethodsMap);
+      int testsWithExceptionCount = startTests(testClass, annotatedMethodsMap);
       testStatistics(annotatedMethodsMap, testsWithExceptionCount);
     } catch (Exception e) {
       System.out.printf("Не получилось создать тестовый класс  %s \n", testClass.getName());
@@ -46,10 +46,13 @@ public class TestRunner {
     }
   }
 
-  private static int startTests(Object testClassInstance, Map<Annotations, List<Method>> annotationsEnumListMap) {
+  private static int startTests(Class<?> testClass, Map<Annotations, List<Method>> annotationsEnumListMap)
+          throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
     int testsWithExceptionCount = 0;
     for (Method testMethod : annotationsEnumListMap.get(Annotations.TEST)) {
       System.out.printf("-> выполняю тест %s \n", testMethod.getName());
+      var testClassInstance = testClass.getConstructor().newInstance();
+      System.out.printf("-> -> Создал новый экземпляр класса %s \n", testClass.getName());
       ReflectionTestUtil.invokeMethod(annotationsEnumListMap.get(Annotations.BEFORE), testClassInstance);
       try {
         System.out.printf("-> -> Запускаю метод с тестом %s \n", testMethod.getName());
